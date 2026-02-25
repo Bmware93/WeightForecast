@@ -9,12 +9,24 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            VStack {
+                Group {
+                    Text("Current Weight")
+                    Text("Average over the last 30 days")
+                }
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity,
+                       maxHeight: .infinity,
+                       alignment: .topLeading)
+            }
+            
         }
+        .padding()
+        .aspectRatio(1.25, contentMode: .fit)
+        .frame(width: 355, height: 145)
+        .background(Color(.systemGray3))
+        .cornerRadius(16)
         .padding()
     }
 }
