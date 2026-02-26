@@ -15,12 +15,50 @@ struct ContentView: View {
             
             VStack(spacing: 18) {
                 header
+                
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 15) {
-                        CurrentWeightCard(title: "Current Weight", subtitle: "-0.3 lbs from previous entry", weight: "180.4", unit: "lbs")
+                        CurrentWeightCard(
+                            title: "Current Weight",
+                            subtitle: "-0.3 lbs from previous entry",
+                            weight: "180.4",
+                            unit: "lbs")
                         
-                        WeeklyRateCard(title: "Weekly Rate", subtitle: "Average over last 30 days", rate: "0.9", unit: "lbs", status: "Losing")
+                        WeeklyRateCard(
+                            title: "Weekly Rate",
+                            subtitle: "Average over last 30 days",
+                            rate: "0.9",
+                            unit: "lbs per week", status: "Losing")
+                        
+                        MilestoneCard(
+                            title: "Next Milestone",
+                            milestone: "185 lbs",
+                            progressLabel: "Progress",
+                            percentText: "28%",
+                            remainingText: "3.6 lbs to go",
+                            progress: 0.28)
+                          
+                        ProgressStatsView(
+                                leftTitle: "Total Lost",
+                                leftValue: "6.2 lbs",
+                                rightTitle: "Days Tracked",
+                                rightValue: "45"
+                            )
+                        Spacer()
+                        
+                        ProUpsellCardView(
+                            title: "Unlock Pro Features",
+                            bullets: [
+                                "Trend weight smoothing",
+                                "Goal date forecasting",
+                                "Plateau detection",
+                                "Advanced analytics"
+                            ],
+                            buttonTitle: "Upgrade to Pro"
+                        )
                     }
+                    .padding(.horizontal, 18)
+                    .padding(.bottom, 16)
                 }
             }
         }

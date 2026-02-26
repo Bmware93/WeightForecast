@@ -17,7 +17,7 @@ struct CardContainer<Content: View>: View {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(Color(.systemBackground))
 //                    .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
-                    .glassEffect()
+                    
                     
             )
     }
