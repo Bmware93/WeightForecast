@@ -14,7 +14,7 @@ struct CardContainer<Content: View>: View {
             .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(Color(.systemBackground))
 //                    .shadow(color: Color.black.opacity(0.08), radius: 10, x: 0, y: 6)
                     .glassEffect()

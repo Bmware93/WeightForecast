@@ -10,25 +10,36 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         ZStack {
-            VStack {
-                Group {
-                    Text("Current Weight")
-                    Text("Average over the last 30 days")
-                }
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity,
-                       maxHeight: .infinity,
-                       alignment: .topLeading)
-            }
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea(.all)
             
+            VStack(spacing: 18) {
+                header
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 15) {
+                        CurrentWeightCard(title: "Current Weight", subtitle: "-0.3 lbs from previous entry", weight: "180.4", unit: "lbs")
+                        
+                        WeeklyRateCard(title: "Weekly Rate", subtitle: "Average over last 30 days", rate: "0.9", unit: "lbs", status: "Losing")
+                    }
+                }
+            }
         }
-        .padding()
-        .aspectRatio(1.25, contentMode: .fit)
-        .frame(width: 355, height: 145)
-        .background(Color(.systemGray3))
-        .cornerRadius(16)
-        .padding()
     }
+}
+
+private var header: some View {
+    VStack(alignment: .leading, spacing: 8) {
+        Text("Overview")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        
+        Text("Forecast")
+            .font(.largeTitle.weight(.regular))
+            .foregroundStyle(.primary)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, 18)
+    .padding(.top, 6)
 }
 
 #Preview {
