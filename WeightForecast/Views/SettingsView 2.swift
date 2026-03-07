@@ -21,8 +21,16 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea(.all)
+                // Modern gradient background
+                LinearGradient(
+                    colors: [
+                        Color(.systemGroupedBackground),
+                        Color(.systemGroupedBackground).opacity(0.7)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea(.all)
                 
                 ScrollView {
                     VStack(spacing: 18) {
@@ -62,9 +70,23 @@ struct SettingsView: View {
     private var profileSection: some View {
         CardContainer {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Profile")
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                HStack {
+                    Image(systemName: "person.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.blue, .cyan],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    Text("Profile")
+                        .font(.headline.weight(.semibold))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                }
                 
                 VStack(spacing: 12) {
                     SettingsRow(
@@ -90,9 +112,23 @@ struct SettingsView: View {
     private var preferencesSection: some View {
         CardContainer {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Preferences")
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                HStack {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.title2)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.purple, .pink],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    Text("Preferences")
+                        .font(.headline.weight(.semibold))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                }
                 
                 VStack(spacing: 12) {
                     ToggleSettingsRow(
@@ -126,9 +162,23 @@ struct SettingsView: View {
     private var goalsSection: some View {
         CardContainer {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Goals & Milestones")
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                HStack {
+                    Image(systemName: "target")
+                        .font(.title2)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.orange, .red],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    Text("Goals & Milestones")
+                        .font(.headline.weight(.semibold))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                }
                 
                 VStack(spacing: 12) {
                     SettingsRow(
@@ -155,21 +205,37 @@ struct SettingsView: View {
         CardContainer {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
+                    Image(systemName: "crown.fill")
+                        .font(.title2)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.yellow, .orange],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
                     Text("Pro Features")
-                        .font(.headline)
+                        .font(.headline.weight(.semibold))
                         .foregroundColor(.primary)
                     
                     Spacer()
                     
                     if preferences?.hasProSubscription ?? false {
                         Text("Active")
-                            .font(.caption)
+                            .font(.caption.weight(.semibold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(Color.green)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [.green, .mint],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
                             )
                     }
                 }
@@ -185,17 +251,30 @@ struct SettingsView: View {
                     Button(action: { }) {
                         HStack {
                             Image(systemName: "crown.fill")
-                                .foregroundColor(.yellow)
+                                .foregroundStyle(
+                                    .linearGradient(
+                                        colors: [.yellow, .orange],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
                             Text("Upgrade to Pro")
-                                .font(.body.weight(.medium))
+                                .font(.body.weight(.semibold))
                                 .foregroundColor(.primary)
                             Spacer()
                             Image(systemName: "chevron.right")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(.secondary.opacity(0.1))
+                                .stroke(.secondary.opacity(0.2), lineWidth: 1)
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -204,9 +283,23 @@ struct SettingsView: View {
     private var appInfoSection: some View {
         CardContainer {
             VStack(alignment: .leading, spacing: 16) {
-                Text("App Information")
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                HStack {
+                    Image(systemName: "info.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.green, .mint],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    Text("App Information")
+                        .font(.headline.weight(.semibold))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                }
                 
                 VStack(spacing: 12) {
                     SettingsRow(
@@ -300,12 +393,18 @@ struct SettingsRow: View {
             HStack {
                 Image(systemName: icon)
                     .font(.title3)
-                    .foregroundColor(.blue)
+                    .foregroundStyle(
+                        .linearGradient(
+                            colors: [.blue, .purple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .frame(width: 24, height: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.body)
+                        .font(.body.weight(.medium))
                         .foregroundColor(.primary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -315,6 +414,12 @@ struct SettingsRow: View {
                 Text(value)
                     .font(.body)
                     .foregroundColor(.secondary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(.secondary.opacity(0.1))
+                    )
                 
                 if action != nil {
                     Image(systemName: "chevron.right")
@@ -340,24 +445,36 @@ struct ToggleSettingsRow: View {
         HStack {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(.blue)
+                .foregroundStyle(
+                    .linearGradient(
+                        colors: [.orange, .red],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
                 .frame(width: 24, height: 24)
             
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(title)
-                        .font(.body)
+                        .font(.body.weight(.medium))
                         .foregroundColor(.primary)
                     
                     if isPro {
                         Text("PRO")
                             .font(.caption2.weight(.semibold))
-                            .foregroundColor(.yellow)
+                            .foregroundColor(.white)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(
                                 RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                    .stroke(Color.yellow, lineWidth: 1)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [.yellow, .orange],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
                             )
                     }
                     
@@ -384,10 +501,18 @@ struct ProFeatureItem: View {
         HStack {
             Image(systemName: isEnabled ? "checkmark.circle.fill" : "circle")
                 .font(.body)
-                .foregroundColor(isEnabled ? .green : .secondary)
+                .foregroundStyle(
+                    isEnabled ? 
+                        .linearGradient(
+                            colors: [.green, .mint],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ) : 
+                        .secondary
+                )
             
             Text(title)
-                .font(.body)
+                .font(.body.weight(.medium))
                 .foregroundColor(.primary)
             
             Spacer()
@@ -400,17 +525,39 @@ struct GoalSettingsSheet: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                Text("Goal Settings")
-                    .font(.title2)
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(.systemGroupedBackground),
+                        Color(.systemGroupedBackground).opacity(0.7)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea(.all)
                 
-                Text("Coming Soon")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
+                VStack(spacing: 20) {
+                    Image(systemName: "target")
+                        .font(.system(size: 60))
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.blue, .purple],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    Text("Goal Settings")
+                        .font(.title2.weight(.semibold))
+                    
+                    Text("Coming Soon")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                }
+                .padding()
             }
-            .padding()
             .navigationTitle("Goals")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -418,6 +565,7 @@ struct GoalSettingsSheet: View {
                     Button("Done") {
                         dismiss()
                     }
+                    .fontWeight(.semibold)
                 }
             }
         }
@@ -429,46 +577,69 @@ struct AboutView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    VStack(spacing: 16) {
-                        Image(systemName: "scalemass.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.blue)
-                        
-                        Text("WeightForecast")
-                            .font(.title.weight(.semibold))
-                        
-                        Text("Version 1.0.0")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 40)
-                    
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("About")
-                            .font(.headline)
-                        
-                        Text("WeightForecast helps you track your weight journey with intelligent analytics and forecasting. Set goals, track progress, and understand your trends with our advanced analytics.")
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                        
-                        Text("Features")
-                            .font(.headline)
-                            .padding(.top, 8)
-                        
-                        VStack(alignment: .leading, spacing: 8) {
-                            BulletPoint(text: "Smart weight tracking with trend analysis")
-                            BulletPoint(text: "Goal setting and milestone tracking")
-                            BulletPoint(text: "Advanced analytics and forecasting")
-                            BulletPoint(text: "Secure local storage with CloudKit sync")
+            ZStack {
+                LinearGradient(
+                    colors: [
+                        Color(.systemGroupedBackground),
+                        Color(.systemGroupedBackground).opacity(0.7)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea(.all)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        VStack(spacing: 16) {
+                            Image(systemName: "scalemass.fill")
+                                .font(.system(size: 60))
+                                .foregroundStyle(
+                                    .linearGradient(
+                                        colors: [.blue, .cyan],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                            
+                            Text("WeightForecast")
+                                .font(.title.weight(.semibold))
+                            
+                            Text("Version 1.0.0")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 40)
+                        
+                        CardContainer {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("About")
+                                    .font(.headline.weight(.semibold))
+                                
+                                Text("WeightForecast helps you track your weight journey with intelligent analytics and forecasting. Set goals, track progress, and understand your trends with our advanced analytics.")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        
+                        CardContainer {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("Features")
+                                    .font(.headline.weight(.semibold))
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    BulletPoint(text: "Smart weight tracking with trend analysis")
+                                    BulletPoint(text: "Goal setting and milestone tracking")
+                                    BulletPoint(text: "Advanced analytics and forecasting")
+                                    BulletPoint(text: "Secure local storage with CloudKit sync")
+                                }
+                            }
+                        }
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
+                    .padding()
                 }
-                .padding()
             }
             .navigationTitle("About")
             .navigationBarTitleDisplayMode(.inline)
@@ -477,6 +648,7 @@ struct AboutView: View {
                     Button("Done") {
                         dismiss()
                     }
+                    .fontWeight(.semibold)
                 }
             }
         }
@@ -490,7 +662,13 @@ struct BulletPoint: View {
         HStack(alignment: .top) {
             Text("•")
                 .font(.body)
-                .foregroundColor(.blue)
+                .foregroundStyle(
+                    .linearGradient(
+                        colors: [.blue, .purple],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
             Text(text)
                 .font(.body)
                 .foregroundColor(.secondary)
