@@ -44,8 +44,16 @@ struct AnalyticsView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea(.all)
+                // Modern gradient background
+                LinearGradient(
+                    colors: [
+                        Color(.systemGroupedBackground),
+                        Color(.systemGroupedBackground).opacity(0.7)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea(.all)
                 
                 ScrollView {
                     VStack(spacing: 18) {
@@ -70,14 +78,22 @@ struct AnalyticsView: View {
             .navigationTitle("Analytics")
             .navigationBarTitleDisplayMode(.large)
             .overlay(alignment: .bottomTrailing) {
-                // Floating Add Button
+                // Modern Floating Add Button
                 Button(action: { showingWeightLog = true }) {
                     Image(systemName: "plus")
                         .font(.title2.weight(.semibold))
                         .foregroundColor(.white)
                         .frame(width: 56, height: 56)
-                        .background(Circle().fill(Color.blue))
-                        .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+                        .background(
+                            Circle().fill(
+                                LinearGradient(
+                                    colors: [.blue, .blue.opacity(0.8)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                        )
+                        .shadow(color: Color.blue.opacity(0.3), radius: 12, x: 0, y: 6)
                 }
                 .padding(.trailing, 18)
                 .padding(.bottom, 16)
@@ -100,10 +116,28 @@ struct AnalyticsView: View {
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                    .fill(selectedTimeRange == range ? Color.blue : Color.clear)
-                                    .stroke(Color.blue, lineWidth: 1)
+                                    .fill(
+                                        selectedTimeRange == range ? 
+                                        AnyShapeStyle(LinearGradient(
+                                            colors: [.blue, .blue.opacity(0.8)],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )) : 
+                                        AnyShapeStyle(Color.clear)
+                                    )
+                                    .stroke(
+                                        selectedTimeRange == range ? Color.clear : .blue.opacity(0.6),
+                                        lineWidth: 1.5
+                                    )
+                            )
+                            .shadow(
+                                color: selectedTimeRange == range ? .blue.opacity(0.3) : .clear,
+                                radius: selectedTimeRange == range ? 4 : 0,
+                                x: 0,
+                                y: 2
                             )
                     }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 18)
@@ -113,9 +147,23 @@ struct AnalyticsView: View {
     private var weightChartCard: some View {
         CardContainer {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Weight Trend")
-                    .font(.headline)
-                    .foregroundColor(.primary)
+                HStack {
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .font(.title2)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.blue, .purple],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
+                    Text("Weight Trend")
+                        .font(.headline.weight(.semibold))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                }
                 
                 if filteredEntries.count >= 2 {
                     Chart(filteredEntries) { entry in
@@ -175,8 +223,18 @@ struct AnalyticsView: View {
         CardContainer {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .font(.title2)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.orange, .red],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    
                     Text("Recent Entries")
-                        .font(.headline)
+                        .font(.headline.weight(.semibold))
                         .foregroundColor(.primary)
                     
                     Spacer()
@@ -184,15 +242,24 @@ struct AnalyticsView: View {
                     Text("\(filteredEntries.count) entries")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .fill(.secondary.opacity(0.1))
+                        )
                 }
                 
                 if filteredEntries.isEmpty {
-                    VStack(spacing: 8) {
+                    VStack(spacing: 12) {
                         Image(systemName: "scale.3d")
-                            .font(.title)
+                            .font(.system(size: 40))
                             .foregroundColor(.secondary)
                         Text("No weight entries yet")
                             .font(.body)
+                            .foregroundColor(.secondary)
+                        Text("Start logging your weight to see history")
+                            .font(.caption)
                             .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity)
@@ -245,13 +312,19 @@ struct StatCard: View {
                 HStack {
                     Image(systemName: icon)
                         .font(.title3)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(
+                            .linearGradient(
+                                colors: [.green, .mint],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
                     
                     Spacer()
                 }
                 
                 Text(title)
-                    .font(.caption)
+                    .font(.caption.weight(.medium))
                     .foregroundColor(.secondary)
                 
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
@@ -261,6 +334,12 @@ struct StatCard: View {
                     Text(unit)
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(.secondary.opacity(0.1))
+                        )
                 }
             }
         }
@@ -287,7 +366,13 @@ struct WeightHistoryRow: View {
             if let notes = entry.notes, !notes.isEmpty {
                 Image(systemName: "note.text")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(
+                        .linearGradient(
+                            colors: [.blue, .purple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             }
         }
         .padding(.vertical, 4)
