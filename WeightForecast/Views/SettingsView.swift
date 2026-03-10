@@ -363,10 +363,71 @@ struct SettingsView: View {
     private func toggleWeightUnit() {
         guard let preferences = preferences else { return }
         
-        preferences.weightUnit = preferences.weightUnit == .pounds ? .kilograms : .pounds
+        let oldUnit = preferences.weightUnit
+        let newUnit: WeightUnit = oldUnit == .pounds ? .kilograms : .pounds
+        
+        // Convert all existing weight data
+        convertAllWeightData(from: oldUnit, to: newUnit)
+        
+        // Update the unit preference
+        preferences.weightUnit = newUnit
         preferences.lastUpdated = Date()
         
         try? modelContext.save()
+    }
+    
+    private func convertAllWeightData(from oldUnit: WeightUnit, to newUnit: WeightUnit) {
+        do {
+            // Fetch and convert weight entries
+            let weightEntryDescriptor = FetchDescriptor<WeightEntry>()
+            let weightEntries = try modelContext.fetch(weightEntryDescriptor)
+            for entry in weightEntries {
+                entry.weight = convertWeight(entry.weight, from: oldUnit, to: newUnit)
+            }
+            
+            // Fetch and convert milestones
+            let milestoneDescriptor = FetchDescriptor<Milestone>()
+            let milestones = try modelContext.fetch(milestoneDescriptor)
+            for milestone in milestones {
+                milestone.targetWeight = convertWeight(milestone.targetWeight, from: oldUnit, to: newUnit)
+            }
+            
+            // Fetch and convert weight goals
+            let goalDescriptor = FetchDescriptor<WeightGoal>()
+            let goals = try modelContext.fetch(goalDescriptor)
+            for goal in goals {
+                goal.targetWeight = convertWeight(goal.targetWeight, from: oldUnit, to: newUnit)
+            }
+            
+            // Convert starting weight in preferences
+            if let preferences = preferences, let startingWeight = preferences.startingWeight {
+                preferences.startingWeight = convertWeight(startingWeight, from: oldUnit, to: newUnit)
+            }
+            
+        } catch {
+            print("Error converting weight data: \(error)")
+        }
+    }
+    
+    private func convertWeight(_ weight: Double, from oldUnit: WeightUnit, to newUnit: WeightUnit) -> Double {
+        if oldUnit == newUnit { return weight }
+        
+        // Convert to kilograms first (as base unit), then to target unit
+        let weightInKg: Double
+        switch oldUnit {
+        case .pounds:
+            weightInKg = weight * oldUnit.conversionToKg
+        case .kilograms:
+            weightInKg = weight
+        }
+        
+        // Convert from kilograms to target unit
+        switch newUnit {
+        case .pounds:
+            return weightInKg / newUnit.conversionToKg
+        case .kilograms:
+            return weightInKg
+        }
     }
     
     private func updateTrendSmoothing(_ enabled: Bool) {
