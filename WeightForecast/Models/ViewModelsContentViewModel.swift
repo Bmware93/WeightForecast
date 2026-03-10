@@ -23,8 +23,11 @@ class ContentViewModel {
     }
     
     private func loadData() {
-        // Weight entries are now passed in via updateWeightEntries()
-        // No need to fetch them here
+        // Fetch weight entries
+        let weightEntryDescriptor = FetchDescriptor<WeightEntry>(
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+        weightEntries = (try? modelContext.fetch(weightEntryDescriptor)) ?? []
         
         // Fetch milestones
         let milestoneDescriptor = FetchDescriptor<Milestone>()
@@ -101,7 +104,7 @@ class ContentViewModel {
     }
     
     var shouldShowProUpsell: Bool {
-        return userPreferences?.hasProSubscription ?? false
+        return userPreferences?.hasProSubscription ?? true
     }
     
     // MARK: - Actions
@@ -118,14 +121,14 @@ class ContentViewModel {
         let entry = WeightEntry(weight: weight, date: date, notes: notes)
         modelContext.insert(entry)
         try? modelContext.save()
-        loadData() // Refresh data
+        refreshData() // Refresh data
     }
     
     func addMilestone(targetWeight: Double, title: String) {
         let milestone = Milestone(targetWeight: targetWeight, title: title)
         modelContext.insert(milestone)
         try? modelContext.save()
-        loadData()
+        refreshData()
     }
     
     func setupInitialUserPreferences() {
@@ -134,6 +137,6 @@ class ContentViewModel {
         let preferences = UserPreferences()
         modelContext.insert(preferences)
         try? modelContext.save()
-        loadData()
+        refreshData()
     }
 }

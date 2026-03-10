@@ -10,14 +10,20 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \WeightEntry.date, order: .reverse) private var weightEntries: [WeightEntry]
     @State private var viewModel: ContentViewModel?
-    @State private var showingWeightLog = false
     
     var body: some View {
         ZStack {
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea(.all)
+            // Modern gradient background
+            LinearGradient(
+                colors: [
+                    Color(.systemGroupedBackground),
+                    Color(.systemGroupedBackground).opacity(0.7)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea(.all)
             
             VStack(spacing: 18) {
                 header
@@ -76,33 +82,13 @@ struct ContentView: View {
                 }
             }
         }
-        .overlay(alignment: .bottomTrailing) {
-            // Floating Add Button
-            Button(action: { showingWeightLog = true }) {
-                Image(systemName: "plus")
-                    .font(.title2.weight(.semibold))
-                    .foregroundColor(.white)
-                    .frame(width: 56, height: 56)
-                    .background(Circle().fill(Color.blue))
-                    .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
-            }
-            .padding(.trailing, 18)
-            .padding(.bottom, 16)
-        }
         .onAppear {
             if viewModel == nil {
                 viewModel = ContentViewModel(modelContext: modelContext)
                 viewModel?.setupInitialUserPreferences()
+            } else {
+                viewModel?.refreshData()
             }
-            // Update weight entries whenever they change
-            viewModel?.updateWeightEntries(weightEntries)
-        }
-        .onChange(of: weightEntries) { _, newEntries in
-            // Automatically update when weight entries change
-            viewModel?.updateWeightEntries(newEntries)
-        }
-        .sheet(isPresented: $showingWeightLog) {
-            WeightLogView()
         }
     }
 }
@@ -110,12 +96,18 @@ struct ContentView: View {
 private var header: some View {
     VStack(alignment: .leading, spacing: 8) {
         Text("Overview")
-            .font(.subheadline)
+            .font(.subheadline.weight(.medium))
             .foregroundStyle(.secondary)
         
         Text("Forecast")
-            .font(.largeTitle.weight(.regular))
-            .foregroundStyle(.primary)
+            .font(.largeTitle.weight(.semibold))
+            .foregroundStyle(
+                .linearGradient(
+                    colors: [.primary, .primary.opacity(0.7)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.horizontal, 18)
