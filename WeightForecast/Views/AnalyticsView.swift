@@ -14,6 +14,7 @@ struct AnalyticsView: View {
     @Query(sort: \WeightEntry.date, order: .forward) private var weightEntries: [WeightEntry]
     @State private var selectedTimeRange: TimeRange = .month
     @State private var showingWeightLog = false
+    @State private var showingFullHistory = false
     
     enum TimeRange: String, CaseIterable {
         case week = "1W"
@@ -101,6 +102,12 @@ struct AnalyticsView: View {
         }
         .sheet(isPresented: $showingWeightLog) {
             WeightLogView()
+        }
+        .sheet(isPresented: $showingFullHistory) {
+            WeightHistoryView(
+                entries: filteredEntries,
+                timeRange: selectedTimeRange.rawValue
+            )
         }
     }
     
@@ -207,14 +214,16 @@ struct AnalyticsView: View {
                 title: "Average",
                 value: averageWeight,
                 unit: "lbs",
-                icon: "scale.3d"
+                icon: "scale.3d",
+                explanation: "The average weight across all entries in the selected time period. This gives you a general sense of your weight level during this timeframe."
             )
             
             StatCard(
                 title: "Change",
                 value: totalChange,
                 unit: "lbs",
-                icon: weightChangeIcon
+                icon: weightChangeIcon,
+                explanation: "The total weight change from your first entry to your most recent entry in the selected time period. A negative value indicates weight loss, while a positive value indicates weight gain."
             )
         }
     }
@@ -265,9 +274,32 @@ struct AnalyticsView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
                 } else {
-                    LazyVStack(spacing: 12) {
-                        ForEach(Array(filteredEntries.reversed().prefix(10)), id: \.id) { entry in
-                            WeightHistoryRow(entry: entry)
+                    VStack(spacing: 12) {
+                        LazyVStack(spacing: 12) {
+                            ForEach(Array(filteredEntries.reversed().prefix(7)), id: \.id) { entry in
+                                WeightHistoryRow(entry: entry)
+                            }
+                        }
+                        
+                        // Show More button if there are more than 7 entries
+                        if filteredEntries.count > 7 {
+                            Button(action: { showingFullHistory = true }) {
+                                HStack(spacing: 8) {
+                                    Text("Show More")
+                                        .font(.subheadline.weight(.medium))
+                                    
+                                    Text("(\(filteredEntries.count - 7) more)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.weight(.semibold))
+                                }
+                                .foregroundColor(.blue)
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.top, 8)
+                            .frame(maxWidth: .infinity, alignment: .center)
                         }
                     }
                 }
@@ -305,6 +337,17 @@ struct StatCard: View {
     let value: String
     let unit: String
     let icon: String
+    let explanation: String?
+    
+    @State private var showingExplanation = false
+    
+    init(title: String, value: String, unit: String, icon: String, explanation: String? = nil) {
+        self.title = title
+        self.value = value
+        self.unit = unit
+        self.icon = icon
+        self.explanation = explanation
+    }
     
     var body: some View {
         CardContainer {
@@ -321,6 +364,15 @@ struct StatCard: View {
                         )
                     
                     Spacer()
+                    
+                    if explanation != nil {
+                        Button(action: { showingExplanation = true }) {
+                            Image(systemName: "info.circle")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
                 
                 Text(title)
@@ -343,39 +395,13 @@ struct StatCard: View {
                 }
             }
         }
-    }
-}
-
-struct WeightHistoryRow: View {
-    let entry: WeightEntry
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(entry.weight, specifier: "%.1f") lbs")
-                    .font(.body.weight(.medium))
-                    .foregroundColor(.primary)
-                
-                Text(entry.date.formatted(date: .abbreviated, time: .omitted))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-            
-            if let notes = entry.notes, !notes.isEmpty {
-                Image(systemName: "note.text")
-                    .font(.caption)
-                    .foregroundStyle(
-                        .linearGradient(
-                            colors: [.blue, .purple],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+        .alert(title, isPresented: $showingExplanation) {
+            Button("OK") { }
+        } message: {
+            if let explanation = explanation {
+                Text(explanation)
             }
         }
-        .padding(.vertical, 4)
     }
 }
 
